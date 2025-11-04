@@ -16,17 +16,21 @@ import sys
 # --- INSTALACIÓN AUTOMÁTICA (opcional) ---
 def instalar_dependencias():
     """Instala las dependencias automáticamente si no están disponibles"""
-    paquetes = ['nltk', 'spacy', 'sklearn', 'PyPDF2']
+    # Mapeo del nombre para pip y el nombre del módulo a importar
+    paquetes = {
+        'nltk': 'nltk',
+        'spacy': 'spacy',
+        'scikit-learn': 'sklearn',
+        'PyPDF2': 'PyPDF2',
+        'python-docx': 'docx'
+    }
 
-    for paquete in paquetes:
+    for paquete_pip, modulo_import in paquetes.items():
         try:
-            if paquete == 'sklearn':
-                __import__('sklearn')
-            else:
-                __import__(paquete)
+            __import__(modulo_import)
         except ImportError:
-            print(f"Instalando {paquete}...")
-            subprocess.check_call([sys.executable, "-m", "pip", "install", paquete])
+            print(f"Instalando {paquete_pip}...")
+            subprocess.check_call([sys.executable, "-m", "pip", "install", paquete_pip])
 
 
 # Ejecutar instalación automática (descomenta la línea siguiente si quieres auto-instalación)
@@ -133,8 +137,10 @@ def leer_corpus_desde_archivo(nombre_archivo):
             return leer_txt(nombre_archivo)
         elif nombre_archivo.lower().endswith('.pdf'):
             return leer_pdf(nombre_archivo)
+        elif nombre_archivo.lower().endswith('.docx'):
+            return leer_docx(nombre_archivo)
         else:
-            print(f"Error: Formato no soportado. Use .txt o .pdf")
+            print(f"Error: Formato no soportado. Use .txt, .pdf o .docx")
             return []
     except Exception as e:
         print(f"Error al leer el archivo: {e}")
@@ -170,13 +176,34 @@ def leer_pdf(nombre_archivo):
         return []
 
 
+def leer_docx(nombre_archivo):
+    """Lee un archivo DOCX y extrae el texto dividido en frases."""
+    try:
+        import docx
+        frases = []
+        documento = docx.Document(nombre_archivo)
+        for parrafo in documento.paragraphs:
+            texto = parrafo.text
+            if texto:
+                # Dividir el texto en frases usando puntos como delimitadores
+                frases_parrafo = [frase.strip() for frase in texto.split('.') if frase.strip()]
+                frases.extend(frases_parrafo)
+        return frases
+    except ImportError:
+        print("Error: python-docx no está instalado. Instálalo con: pip install python-docx")
+        return []
+    except Exception as e:
+        print(f"Error al leer DOCX: {e}")
+        return []
+
+
 # --- OBTENER PARÁMETROS DEL USUARIO ---
 print("\n" + "=" * 60)
 print(" STEP 1: CONFIGURE ANALYSIS")
 print("=" * 60)
 
 # 1. Obtener nombre del archivo
-nombre_archivo = input("Please enter the file name (.txt or .pdf): ").strip()
+nombre_archivo = input("Please enter the file name (.txt, .pdf, or .docx): ").strip()
 
 # 2. Obtener número de top words
 while True:
@@ -520,8 +547,8 @@ The primary goal is to demonstrate the impact of data cleaning and to extract me
 
 ## ✨ Features
 
-- **Dynamic File Loading**: Reads and processes both plain text (`.txt`) and PDF (`.pdf`) files.
-- **Automated Dependency Management**: Can automatically detect and install missing Python libraries (`nltk`, `spacy`, `PyPDF2`, `scikit-learn`).
+- **Dynamic File Loading**: Reads and processes plain text (`.txt`), PDF (`.pdf`), and Word (`.docx`) files.
+- **Automated Dependency Management**: Can automatically detect and install missing Python libraries (`nltk`, `spacy`, `PyPDF2`, `scikit-learn`, `python-docx`).
 - **Comprehensive Stopword Removal**: Aggregates stopwords from three professional NLP libraries (NLTK, spaCy, and Scikit-learn) for a thorough cleaning. It also automatically downloads required NLTK data.
 - **Interactive Stopword Refinement**: After an initial cleaning, the user can review the most frequent words and add custom words to the stopword list for a more refined analysis.
 - **Comparative Frequency Analysis**: Generates side-by-side bar charts to visually compare the most frequent words **before** and **after** stopword removal, clearly demonstrating the effect of cleaning.
@@ -543,7 +570,7 @@ The primary goal is to demonstrate the impact of data cleaning and to extract me
 
 3.  **Step 1: Configure Analysis**:
     - The script will first ask for the **file name** (e.g., `1984.pdf` or `Miser.txt`).
-    - It will then ask for the **number of top words** you want to see in the frequency analysis (e.g., `15`).
+    - It will then ask for the **number of top words** you want to see in the frequency analysis (e.g., `20`).
 
 4.  **Step 2 & 3: Initial Analysis**:
     - The script will perform an initial analysis and display the top words before and after cleaning.
@@ -564,11 +591,11 @@ The primary goal is to demonstrate the impact of data cleaning and to extract me
 
 ## ⚙️ Dependencies
 
-The script requires the following Python libraries: `nltk`, `spacy` (and its `en_core_web_sm` model), `scikit-learn`, `PyPDF2`, `matplotlib`.
+The script requires the following Python libraries: `nltk`, `spacy` (and its `en_core_web_sm` model), `scikit-learn`, `PyPDF2`, `python-docx`, `matplotlib`.
 
 The script includes a function to install these automatically. If you prefer to install them manually, you can use pip:
 ```sh
-pip install nltk spacy scikit-learn PyPDF2 matplotlib
+pip install nltk spacy scikit-learn PyPDF2 python-docx matplotlib
 python -m spacy download en_core_web_sm
 ```
 """
