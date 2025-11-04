@@ -6,8 +6,8 @@ The primary goal is to demonstrate the impact of data cleaning and to extract me
 
 ## ✨ Features
 
-- **Dynamic File Loading**: Reads and processes both plain text (`.txt`) and PDF (`.pdf`) files.
-- **Automated Dependency Management**: Can automatically detect and install missing Python libraries (`nltk`, `spacy`, `PyPDF2`, `scikit-learn`).
+- **Dynamic File Loading**: Reads and processes plain text (`.txt`), PDF (`.pdf`), and Word (`.docx`) files.
+- **Automated Dependency Management**: Can automatically detect and install missing Python libraries (`nltk`, `spacy`, `PyPDF2`, `scikit-learn`, `python-docx`).
 - **Comprehensive Stopword Removal**: Aggregates stopwords from three professional NLP libraries (NLTK, spaCy, and Scikit-learn) for a thorough cleaning. It also automatically downloads required NLTK data.
 - **Interactive Stopword Refinement**: After an initial cleaning, the user can review the most frequent words and add custom words to the stopword list for a more refined analysis.
 - **Comparative Frequency Analysis**: Generates side-by-side bar charts to visually compare the most frequent words **before** and **after** stopword removal, clearly demonstrating the effect of cleaning.
@@ -19,7 +19,7 @@ The primary goal is to demonstrate the impact of data cleaning and to extract me
 
 ## 🚀 How to Use
 
-1.  **Place your file**: Make sure the `.txt` or `.pdf` file you want to analyze is in the same directory as the script.
+1.  **Place your file**: Make sure the `.txt`, `.pdf`, or `.docx` file you want to analyze is in the same directory as the script.
 
 2.  **Run the script**: Open your terminal or command prompt and run the script using Python.
 
@@ -28,8 +28,8 @@ The primary goal is to demonstrate the impact of data cleaning and to extract me
     ```
 
 3.  **Step 1: Configure Analysis**:
-    - The script will first ask for the **file name** (e.g., `1984.pdf` or `Miser.txt`).
-    - It will then ask for the **number of top words** you want to see in the frequency analysis (e.g., `15`).
+    - The script will first ask for the **file name** (e.g., `my_document.docx`, `1984.pdf`, or `Miser.txt`).
+    - It will then ask for the **number of top words** you want to see in the frequency analysis (e.g., `20`).
 
 4.  **Step 2 & 3: Initial Analysis**:
     - The script will perform an initial analysis and display the top words before and after cleaning.
@@ -50,10 +50,10 @@ The primary goal is to demonstrate the impact of data cleaning and to extract me
 
 ## ⚙️ Dependencies
 
-The script requires the following Python libraries: `nltk`, `spacy` (and its `en_core_web_sm` model), `scikit-learn`, `PyPDF2`, `matplotlib`.
+The script requires the following Python libraries: `nltk`, `spacy` (and its `en_core_web_sm` model), `scikit-learn`, `PyPDF2`, `python-docx`, `matplotlib`.
 
 The script includes a function to install these automatically. If you prefer to install them manually, you can use pip:
 ```sh
-pip install nltk spacy scikit-learn PyPDF2 matplotlib
+pip install nltk spacy scikit-learn PyPDF2 python-docx matplotlib
 python -m spacy download en_core_web_sm
 ```

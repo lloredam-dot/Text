@@ -12,20 +12,22 @@ import matplotlib.pyplot as plt
 import subprocess
 import sys
 
+# --- DEPENDENCIAS DEL PROYECTO ---
+DEPENDENCIAS = {
+    'nltk': 'nltk',
+    'spacy': 'spacy',
+    'scikit-learn': 'sklearn',
+    'PyPDF2': 'PyPDF2',
+    'python-docx': 'docx',
+    'matplotlib': 'matplotlib'
+}
+
 
 # --- INSTALACIÓN AUTOMÁTICA (opcional) ---
 def instalar_dependencias():
     """Instala las dependencias automáticamente si no están disponibles"""
-    # Mapeo del nombre para pip y el nombre del módulo a importar
-    paquetes = {
-        'nltk': 'nltk',
-        'spacy': 'spacy',
-        'scikit-learn': 'sklearn',
-        'PyPDF2': 'PyPDF2',
-        'python-docx': 'docx'
-    }
-
-    for paquete_pip, modulo_import in paquetes.items():
+    print("Verificando dependencias...")
+    for paquete_pip, modulo_import in DEPENDENCIAS.items():
         try:
             __import__(modulo_import)
         except ImportError:
@@ -560,7 +562,7 @@ The primary goal is to demonstrate the impact of data cleaning and to extract me
 
 ## 🚀 How to Use
 
-1.  **Place your file**: Make sure the `.txt` or `.pdf` file you want to analyze is in the same directory as the script.
+1.  **Place your file**: Make sure the `.txt`, `.pdf`, or `.docx` file you want to analyze is in the same directory as the script.
 
 2.  **Run the script**: Open your terminal or command prompt and run the script using Python.
 
@@ -569,7 +571,7 @@ The primary goal is to demonstrate the impact of data cleaning and to extract me
     ```
 
 3.  **Step 1: Configure Analysis**:
-    - The script will first ask for the **file name** (e.g., `1984.pdf` or `Miser.txt`).
+    - The script will first ask for the **file name** (e.g., `my_document.docx`, `1984.pdf`, or `Miser.txt`).
     - It will then ask for the **number of top words** you want to see in the frequency analysis (e.g., `20`).
 
 4.  **Step 2 & 3: Initial Analysis**:
@@ -603,5 +605,15 @@ python -m spacy download en_core_web_sm
         f.write(readme_content)
     print("\n📄 README.md has been created/updated.")
 
-# Generar el archivo README.md al final de la ejecución
+def crear_requirements_txt():
+    """Crea o sobrescribe el archivo requirements.txt con las dependencias del script."""
+    requirements_content = "\n".join(DEPENDENCIAS.keys())
+    with open("requirements.txt", "w", encoding="utf-8") as f:
+        f.write(requirements_content)
+    print("📦 requirements.txt has been created/updated.")
+
+
+# --- GENERACIÓN DE ARCHIVOS FINALES ---
+# Generar los archivos README.md y requirements.txt al final de la ejecución
 crear_readme()
+crear_requirements_txt()
