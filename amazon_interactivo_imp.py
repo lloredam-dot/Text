@@ -233,38 +233,56 @@ HTML_RESULTS_TEMPLATE = """
 <head>
     <meta charset="UTF-8">
     <title>Resultados de Scraping</title>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; background-color: #f0f2f5; }
-        .container { max-width: 1200px; margin: 20px auto; padding: 20px; background-color: #fff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        h1 { text-align: center; color: #1c1e21; border-bottom: 1px solid #ddd; padding-bottom: 10px; }
-        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
-        .product-card { border: 1px solid #ddd; border-radius: 8px; overflow: hidden; transition: box-shadow 0.2s; }
-        .product-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-        .product-card img { width: 100%; height: 200px; object-fit: cover; }
-        .product-info { padding: 15px; }
-        .product-title { font-size: 1rem; font-weight: 600; height: 3.2em; overflow: hidden; }
-        .product-price { font-size: 1.2rem; font-weight: bold; color: #b12704; margin: 10px 0; }
-        .product-rating { font-size: 0.9rem; color: #555; }
-        .product-link { display: block; text-align: center; padding: 10px; background-color: #007bff; color: #fff; text-decoration: none; font-weight: 600; }
+        body { font-family: Arial, sans-serif; padding: 20px; background-color: #f4f4f4; }
+        h1 { text-align: center; }
+        .container { max-width: 1400px; margin: auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        table.dataTable thead th { background-color: #007bff; color: white; }
+        .product-image { max-width: 60px; border-radius: 5px; }
+        td { vertical-align: middle; }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Resultados para "{{ busqueda }}"</h1>
-        <div class="product-grid">
-            {% for p in productos %}
-            <div class="product-card">
-                <a href="{{ p.url }}" target="_blank"><img src="{{ p.imagen_url }}" alt="{{ p.titulo }}"></a>
-                <div class="product-info">
-                    <div class="product-title">{{ p.titulo }}</div>
-                    <div class="product-price">{{ p.precio }}</div>
-                    <div class="product-rating">{{ p.rating }} ({{ p.num_reviews }} reseñas)</div>
-                </div>
-                <a href="{{ p.url }}" class="product-link" target="_blank">Ver en Amazon</a>
-            </div>
-            {% endfor %}
-        </div>
+        <table id="productsTable" class="display" style="width:100%">
+            <thead>
+                <tr>
+                    <th>Imagen</th>
+                    <th>Título</th>
+                    <th>Precio (€)</th>
+                    <th>Rating</th>
+                    <th>Nº Reseñas</th>
+                    <th>Link</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in productos %}
+                <tr>
+                    <td><img src="{{ p.imagen_url }}" alt="-" class="product-image"></td>
+                    <td>{{ p.titulo }}</td>
+                    <td>{{ p.precio_num }}</td>
+                    <td>{{ p.rating_num }}</td>
+                    <td>{{ p.num_reviews }}</td>
+                    <td><a href="{{ p.url }}" target="_blank">Ver</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
+    <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#productsTable').DataTable({
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/1.11.5/i18n/es-ES.json"
+                },
+                "order": [[ 2, "asc" ]]
+            });
+        });
+    </script>
 </body>
 </html>
 """
