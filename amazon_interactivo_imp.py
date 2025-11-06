@@ -148,7 +148,7 @@ class AmazonScraperSelenium:
             return None
 
     def scrape_productos(self, busqueda, cantidad=20, min_price=0.0, max_price=float('inf')):
-        """Scrapea productos de Amazon con filtro de precio"""
+        """Scrapea productos de Amazon con filtro de precio y muestra el progreso en consola."""
         print(f"\n🔍 BUSQUEDA: {busqueda}")
         print(f"📦 Objetivo: {cantidad} productos")
         if min_price > 0 or max_price < float('inf'):
@@ -163,16 +163,24 @@ class AmazonScraperSelenium:
 
             elements = self.driver.find_elements(By.CSS_SELECTOR, '[data-component-type="s-search-result"]')
             if not elements:
+                print("❌ No se pudieron encontrar productos en la página")
                 return []
 
+            print(f"\n--- 📦 Productos Encontrados --- ({len(elements)} resultados iniciales)")
             productos_procesados = 0
             for i, elem in enumerate(elements):
                 if productos_procesados >= cantidad:
                     break
-                producto = self.extract_product_data(elem, i)
+                producto = self.extract_product_data(elem, productos_procesados)
                 if producto and min_price <= producto['precio_num'] <= max_price:
                     self.productos.append(producto)
                     productos_procesados += 1
+                    # Mostrar progreso en la consola
+                    print(f"\n{productos_procesados}. {producto['titulo'][:70]}...")
+                    print(f"   💰 Precio: {producto['precio']} | ⭐ Rating: {producto['rating']}")
+            
+            print("\n---------------------------------")
+            print(f"✅ Scraping completado: {len(self.productos)} productos obtenidos y listos para mostrar en la web.")
             return self.productos
         except Exception as e:
             print(f"❌ Error durante el scraping: {e}")
