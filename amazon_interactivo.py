@@ -46,7 +46,7 @@ class AmazonScraper:
         self.productos = []
         self.seleccionados = []
 
-    async def scrape_productos(self, busqueda, cantidad=20):
+    async def scrape_productos(self, busqueda, cantidad=20, min_price=0, max_price=float('inf')):
         """Scrapea productos de Amazon con selectores mejorados"""
         print(f"\n[BUSQUEDA] Buscando: {busqueda}")
         print(f"[INFO] Cantidad: {cantidad} productos\n")
@@ -298,6 +298,10 @@ class AmazonScraper:
                     else:
                         print("    -> [WARN] No se encontró URL para este producto, no se pueden obtener detalles.")
 
+                    # --- FILTRADO POR PRECIO INICIAL ---
+                    if not (min_price <= precio_num <= max_price):
+                        continue # Saltar este producto si está fuera del rango de precios
+
                     producto = {
                         'id': i + 1,
                         'titulo': titulo.strip(),
@@ -530,6 +534,23 @@ async def main():
     busqueda_input = input("\n¿Qué quieres buscar? (default: guitarra electrica): ").strip()
     busqueda = busqueda_input or "guitarra electrica"
 
+    # Preguntar por el rango de precios
+    min_price = 0
+    max_price = float('inf')
+    while True:
+        min_str = input("  Precio mínimo (dejar en blanco para no tener mínimo): ").strip()
+        max_str = input("  Precio máximo (dejar en blanco para no tener máximo): ").strip()
+        try:
+            min_price = float(min_str) if min_str else 0
+            max_price = float(max_str) if max_str else float('inf')
+            if min_price > max_price:
+                print("[ERROR] El precio mínimo no puede ser mayor que el máximo. Inténtalo de nuevo.")
+            else:
+                print(f"[INFO] Filtrando productos entre {min_price:.2f} y {max_price:.2f} EUR.")
+                break
+        except ValueError:
+            print("[ERROR] Por favor, ingresa un número válido para el precio. Inténtalo de nuevo.")
+
     try:
         cantidad_input = input("¿Cuántos productos quieres ver? [20]: ").strip()
         cantidad = int(cantidad_input) if cantidad_input else 20
@@ -540,7 +561,7 @@ async def main():
     scraper = AmazonScraper()
 
     # Scrapear
-    await scraper.scrape_productos(busqueda, cantidad)
+    await scraper.scrape_productos(busqueda, cantidad, min_price, max_price)
 
     if not scraper.productos:
         print("\n[ERROR] No se pudieron extraer productos. Verifica:")
